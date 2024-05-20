@@ -1,10 +1,14 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
+
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
 
   configureSwagger(app);
 
@@ -17,6 +21,8 @@ const configureSwagger = (app: INestApplication): void => {
     .setTitle('API Documentation')
     .setDescription('API endpoints documentation')
     .setVersion('1.0')
+    .addBearerAuth()
+    .addApiKey()
     .build();
 
   const api: OpenAPIObject = SwaggerModule.createDocument(app, config);
